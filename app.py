@@ -77,6 +77,7 @@ if uploaded_ltl and uploaded_csv:
         try:
             # Load SAP LTL Cleaned
             df_LTL_grouped = pd.read_excel(uploaded_ltl)
+            df_LTL_grouped['Purchase order no.'] = df_LTL_grouped['Purchase order no.'].astype(int)
 
             # Load CommerceHub CSV
             uploaded_csv.seek(0) # Ensure file pointer is at the start
@@ -127,6 +128,9 @@ if uploaded_ltl and uploaded_csv:
             total_rows = len(df_BOL)
 
             for i, row in df_BOL.iterrows():
+                dn = row.get("DN","") #get DN for filename
+                dn = str(dn).strip().replace("/","_").replace("//"."_") #make sure filename is clean
+                                                              
                 replacements = {
                     "{{CARRIER NAME}}": row.get("Carrier_name", ""),
                     "{{CUSTOMER NAME}}": row.get("ShipToName", ""),
@@ -146,7 +150,7 @@ if uploaded_ltl and uploaded_csv:
                     "{{QTY_PACK}}": str(row.get("Order Quantity", ""))
                 }
 
-                output_file = os.path.join(OUTPUT_FOLDER, f"filled_BOL_{i+1}.docx")
+                output_file = os.path.join(OUTPUT_FOLDER, f"BOL_{dn}.docx")
                 fill_template(TEMPLATE_PATH, output_file, replacements)
                 created_files.append(output_file)
 
