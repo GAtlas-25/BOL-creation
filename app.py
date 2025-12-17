@@ -77,7 +77,6 @@ if uploaded_ltl and uploaded_csv:
         try:
             # Load SAP LTL Cleaned
             df_LTL_grouped = pd.read_excel(uploaded_ltl)
-            df_LTL_grouped['Purchase order no.'] = df_LTL_grouped['Purchase order no.'].astype(int)
 
             # Load CommerceHub CSV
             uploaded_csv.seek(0) # Ensure file pointer is at the start
@@ -112,6 +111,10 @@ if uploaded_ltl and uploaded_csv:
                 df_chub['ShippingCodeStores'],
                 df_chub['ShippingCodeHomeDelivery']
             )
+
+            # Convert POs in both files to same datatype
+            df_LTL_grouped['Purchase order no.'] = df_LTL_grouped['Purchase order no.'].astype(int)
+            df_chub['PONumber'] = df_chub['PONumber'].astype(int)
 
             # Merge with LTL grouped
             df_BOL = pd.merge(
