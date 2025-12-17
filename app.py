@@ -129,7 +129,7 @@ if uploaded_ltl and uploaded_csv:
 
             for i, row in df_BOL.iterrows():
                 dn = row.get("DN","") #get DN for filename
-                dn = str(dn).strip().replace("/","_").replace("//"."_") #make sure filename is clean
+                dn = str(dn).strip().replace("/","_").replace("//","_") #make sure filename is clean
                                                               
                 replacements = {
                     "{{CARRIER NAME}}": row.get("Carrier_name", ""),
