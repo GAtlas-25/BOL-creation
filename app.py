@@ -133,6 +133,9 @@ if uploaded_ltl and uploaded_csv:
             for i, row in df_BOL.iterrows():
                 dn = row.get("DN","") #get DN for filename
                 dn = str(dn).strip().replace("/","_").replace("//","_") #make sure filename is clean
+                
+                scac = row.get("SCAC", "") #add carrier code in the name of the file
+                scac = str(scac).strip().replace("/", "_")
                                                               
                 replacements = {
                     "{{CARRIER NAME}}": row.get("Carrier_name", ""),
@@ -153,7 +156,7 @@ if uploaded_ltl and uploaded_csv:
                     "{{QTY_PACK}}": str(row.get("Order Quantity", ""))
                 }
 
-                output_file = os.path.join(OUTPUT_FOLDER, f"BOL_{dn}.docx")
+                output_file = os.path.join(OUTPUT_FOLDER, f"BOL_{dn}_{scac}.docx")
                 fill_template(TEMPLATE_PATH, output_file, replacements)
                 created_files.append(output_file)
 
