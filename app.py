@@ -131,11 +131,25 @@ if uploaded_ltl and uploaded_csv:
             total_rows = len(df_BOL)
 
             for i, row in df_BOL.iterrows():
-                dn = row.get("DN","") #get DN for filename
-                dn = str(dn).strip().replace("/","_").replace("//","_") #make sure filename is clean
                 
-                scac = row.get("SCAC", "") #add carrier code in the name of the file
+                #extract dn to put in the filename and make sure doesn't have decimals
+                dn_raw = row.get("DN","") #get DN for filename
+                if pd.notna(dn_raw) and str(dn_raw).strip() != "":
+                    dn = str(int(float(dn_raw)))
+                else:
+                    dn = ""
+                dn = str(dn).strip().replace("/","_") #make sure filename is clean
+                
+                #add carrier code in the name of the file
+                scac = row.get("SCAC", "") 
                 scac = str(scac).strip().replace("/", "_")
+
+                # remove decimals from weight
+                weight_raw = row.get("Gross weight", "")
+                if pd.notna(weight_raw) and str(weight_raw).strip() != "":
+                    weight = str(int(float(weight_raw)))
+                else:
+                    weight = ""
                                                               
                 replacements = {
                     "{{CARRIER NAME}}": row.get("Carrier_name", ""),
@@ -146,17 +160,17 @@ if uploaded_ltl and uploaded_csv:
                     "{{STATE}}": row.get("ShipToState", ""),
                     "{{ZIP CODE}}": row.get("ShipToPostalCode", ""),
                     "{{PHONE NUMBER}}": row.get("ShipToDayPhone", ""),
-                    "{{SCAC}}": row.get("SCAC", ""),
+                    "{{SCAC}}": scac,
                     "{{PO_NUMBER}}": row.get("PONumber", ""),
                     "{{NUM_PACKAGES}}": str(row.get("Order Quantity", "")),
-                    "{{WEIGHT}}": str(row.get("Gross weight", "")),
+                    "{{WEIGHT}}": weight,
                     "{{CUSTOMER ORDER}}": row.get("CustomerOrderNumber", ""),
-                    "{{DELIVERY NUMBER}}": row.get("DN", ""),
+                    "{{DELIVERY NUMBER}}": dn,
                     "{{QTY_1}}": str(row.get("Pallet_qty", "")),
                     "{{QTY_PACK}}": str(row.get("Order Quantity", ""))
                 }
 
-                output_file = os.path.join(OUTPUT_FOLDER, f"BOL_{dn}_{scac}.docx")
+                output_file = os.path.join(OUTPUT_FOLDER, f"{dn}_{scac}.docx")
                 fill_template(TEMPLATE_PATH, output_file, replacements)
                 created_files.append(output_file)
 
