@@ -150,6 +150,13 @@ if uploaded_ltl and uploaded_csv:
                     weight = str(int(float(weight_raw)))
                 else:
                     weight = ""
+
+                # remove decimals from pallet count
+                pallet_raw = row.get("Pallet_qty", "")
+                if pd.notna(pallet_raw) and str(pallet_raw).strip() != "":
+                    pallet_qty = str(int(float(pallet_raw)))
+                else:
+                    pallet_qty = ""
                                                               
                 replacements = {
                     "{{CARRIER NAME}}": row.get("Carrier_name", ""),
@@ -166,7 +173,7 @@ if uploaded_ltl and uploaded_csv:
                     "{{WEIGHT}}": weight,
                     "{{CUSTOMER ORDER}}": row.get("CustomerOrderNumber", ""),
                     "{{DELIVERY NUMBER}}": dn,
-                    "{{QTY_1}}": str(row.get("Pallet_qty", "")),
+                    "{{QTY_1}}": pallet_qty,
                     "{{QTY_PACK}}": str(row.get("Order Quantity", ""))
                 }
 
