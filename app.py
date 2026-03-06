@@ -82,7 +82,13 @@ if uploaded_ltl and uploaded_csv:
             uploaded_csv.seek(0) # Ensure file pointer is at the start
 
             # Read CSV, skipping first 3 rows
-            df_csv = pd.read_csv(uploaded_csv, skiprows=4, encoding='utf-8', engine='python')
+            df_csv = pd.read_csv(
+                uploaded_csv,
+                skiprows=4,
+                encoding='utf-8',
+                engine='python',
+                dtype={'ShipToPostalCode': str}
+            )
             
             df_csv.columns = df_csv.columns.str.strip().str.replace(r"\s+", "", regex=True)
             df_csv['HD_Store'] = df_csv['ShipToAddress1'].str.extract(r'Store #(\d{3,})')
